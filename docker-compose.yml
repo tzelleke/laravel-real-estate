@@ -1,5 +1,7 @@
-version: '3'
+version: '3.9'
+
 services:
+
     laravel.test:
         build:
             context: ./vendor/laravel/sail/runtimes/8.2
@@ -28,6 +30,7 @@ services:
             - meilisearch
             - minio
             - mailpit
+
     pgsql:
         image: 'postgres:15'
         ports:
@@ -43,16 +46,10 @@ services:
         networks:
             - sail
         healthcheck:
-            test:
-                - CMD
-                - pg_isready
-                - '-q'
-                - '-d'
-                - '${DB_DATABASE}'
-                - '-U'
-                - '${DB_USERNAME}'
+            test: ['CMD', 'pg_isready', '-q', '-d', '${DB_DATABASE}', '-U', '${DB_USERNAME}']
             retries: 3
             timeout: 5s
+
     redis:
         image: 'redis:alpine'
         ports:
@@ -62,12 +59,10 @@ services:
         networks:
             - sail
         healthcheck:
-            test:
-                - CMD
-                - redis-cli
-                - ping
+            test: ['CMD', 'redis-cli', 'ping']
             retries: 3
             timeout: 5s
+
     meilisearch:
         image: 'getmeili/meilisearch:latest'
         ports:
@@ -77,14 +72,10 @@ services:
         networks:
             - sail
         healthcheck:
-            test:
-                - CMD
-                - wget
-                - '--no-verbose'
-                - '--spider'
-                - 'http://localhost:7700/health'
+            test: ['CMD', 'wget', '--no-verbose', '--spider', 'http://localhost:7700/health']
             retries: 3
             timeout: 5s
+
     minio:
         image: 'minio/minio:latest'
         ports:
@@ -99,13 +90,10 @@ services:
             - sail
         command: 'minio server /data/minio --console-address ":8900"'
         healthcheck:
-            test:
-                - CMD
-                - curl
-                - '-f'
-                - 'http://localhost:9000/minio/health/live'
+            test: ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live']
             retries: 3
             timeout: 5s
+
     mailpit:
         image: 'axllent/mailpit:latest'
         ports:
@@ -113,9 +101,11 @@ services:
             - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
         networks:
             - sail
+
 networks:
     sail:
         driver: bridge
+
 volumes:
     sail-pgsql:
         driver: local
