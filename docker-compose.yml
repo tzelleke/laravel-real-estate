@@ -1,14 +1,27 @@
 version: '3.9'
 
+x-laravel: &laravel
+    image: sail-8.2/app
+    volumes:
+        - '.:/var/www/html'
+    networks:
+        - sail
+    depends_on:
+        - pgsql
+        - redis
+        - meilisearch
+        - minio
+        - mailpit
+
 services:
 
     laravel.test:
+        <<: *laravel
         build:
             context: ./docker
             dockerfile: Dockerfile
             args:
                 WWWGROUP: '${WWWGROUP}'
-        image: sail-8.2/app
         extra_hosts:
             - 'host.docker.internal:host-gateway'
         ports:
@@ -20,16 +33,6 @@ services:
             XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
             XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
             IGNITION_LOCAL_SITES_PATH: '${PWD}'
-        volumes:
-            - '.:/var/www/html'
-        networks:
-            - sail
-        depends_on:
-            - pgsql
-            - redis
-            - meilisearch
-            - minio
-            - mailpit
 
     pgsql:
         image: 'postgres:15'
@@ -46,7 +49,7 @@ services:
         networks:
             - sail
         healthcheck:
-            test: ['CMD', 'pg_isready', '-q', '-d', '${DB_DATABASE}', '-U', '${DB_USERNAME}']
+            test: [ 'CMD', 'pg_isready', '-q', '-d', '${DB_DATABASE}', '-U', '${DB_USERNAME}' ]
             retries: 3
             timeout: 5s
 
@@ -59,7 +62,7 @@ services:
         networks:
             - sail
         healthcheck:
-            test: ['CMD', 'redis-cli', 'ping']
+            test: [ 'CMD', 'redis-cli', 'ping' ]
             retries: 3
             timeout: 5s
 
@@ -72,7 +75,7 @@ services:
         networks:
             - sail
         healthcheck:
-            test: ['CMD', 'wget', '--no-verbose', '--spider', 'http://localhost:7700/health']
+            test: [ 'CMD', 'wget', '--no-verbose', '--spider', 'http://localhost:7700/health' ]
             retries: 3
             timeout: 5s
 
@@ -90,7 +93,7 @@ services:
             - sail
         command: 'minio server /data/minio --console-address ":8900"'
         healthcheck:
-            test: ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live']
+            test: [ 'CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live' ]
             retries: 3
             timeout: 5s
 
