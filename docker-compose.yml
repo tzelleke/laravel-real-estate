@@ -105,6 +105,10 @@ services:
         networks:
             - sail
 
+    laravel.worker:
+        <<: *laravel
+        command: php artisan queue:listen
+
 networks:
     sail:
         driver: bridge
