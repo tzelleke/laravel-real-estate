@@ -9,6 +9,23 @@ env:
 jobs:
   lint_test:
     runs-on: ubuntu-latest
+    env:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          POSTGRES_DB: testing
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432
 
     steps:
       - name: Setup PHP
@@ -75,5 +92,10 @@ jobs:
           php artisan key:generate
 
       - name: PHPUnit
+        env:
+          DB_HOST: '0.0.0.0'
+          DB_PORT: ${{ job.services.postgres.ports['5432'] }}
+          DB_USERNAME: ${{ env.POSTGRES_USER }}
+          DB_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
         run: |
           php artisan test --coverage
