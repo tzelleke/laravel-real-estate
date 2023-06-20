@@ -53,9 +53,20 @@ jobs:
         run: |
           phpstan analyze -c phpstan.neon.dist
 
-      - name: Build frontend assets
+      - name: Install Node dependencies
         run: |
           npm ci
+
+      - name: Run ESLint
+        run: |
+          npx eslint resources/js
+
+      - name: Run Prettier
+        run: |
+          npx prettier --check resources
+
+      - name: Build frontend assets
+        run: |
           npm run build
 
       - name: Prepare Laravel
