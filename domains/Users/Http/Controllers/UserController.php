@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Domains\Users\Http\Controllers;
 
-use App\Http\Resources\UserResource;
-use App\Models\User;
+use App\Http\Controllers\Controller;
+use Domains\Users\Http\Resources\UserResource;
+use Domains\Users\Models\User;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 

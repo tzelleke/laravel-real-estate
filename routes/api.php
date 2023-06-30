@@ -1,7 +1,6 @@
 <?php
 
-use App\Http\Controllers\UserController;
-use App\Http\Resources\UserResource;
+use Domains\Users\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,12 +15,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-    return new UserResource($request->user());
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/user', function (Request $request) {
+        return new UserResource($request->user());
+    });
 });
 
-Route::group(['middleware' => 'auth:sanctum'], function () {
-    Route::apiResource('users', UserController::class)
-        ->only(['index', 'show', 'destroy'])
-    ;
-});
+require __DIR__.'/../domains/Users/routes/api.php';
