@@ -3,18 +3,17 @@
 namespace Database\Factories;
 
 use Domains\Users\Models\User;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Domains\Users\Models\User>
+ * @extends \Database\Factories\Factory<\Domains\Users\Models\User>
  */
 class UserFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
-     * @var string
+     * @var class-string<\Domains\Users\Models\User>
      */
     protected $model = User::class;
 
